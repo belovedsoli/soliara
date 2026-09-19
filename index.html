@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<script>
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
+    document.addEventListener('keydown', (e) => {
+        const key = e.key;
+        const blocked =
+            key === 'F12' ||
+            (e.ctrlKey && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(key)) ||
+            (e.ctrlKey && ['U', 'u'].includes(key)) ||
+            (e.metaKey && e.altKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(key));
+        if (blocked) e.preventDefault();
+    });
+</script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Ara ♡</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♡</text></svg>">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <!-- ═══════ BLURRED INTRO ═══════ -->
+    <div class="intro-screen" id="introScreen">
+        <div class="intro-bg" id="introBg"></div>
+        <div class="intro-content">
+            <div class="intro-heart" id="introHeart">♡</div>
+            <p class="intro-hint">click to open</p>
+        </div>
+    </div>
+
+    <!-- ═══════ MAIN PAGE ═══════ -->
+    <div class="main-page" id="mainPage">
+
+        <!-- HERO -->
+        <section class="hero">
+            <div class="hero-pic-wrap">
+                <img src="images/her1.jpg" alt="Her" class="hero-pic">
+                <div class="ring"></div>
+                <div class="ring ring2"></div>
+            </div>
+            <h1 class="fade-up">For You</h1>
+            <p class="sub fade-up">My favorite person, always.</p>
+            <div class="scroll-hint">scroll ↓</div>
+        </section>
+
+        <section class="music">
+            <h2>Three songs whenever I remember you</h2>
+            <p class="music-note">Pick a song to play while you read</p>
+            <div class="song-list">
+                <button class="song" data-src="music/song1.mp3">aphrodite - the ridleys</button>
+                <button class="song" data-src="music/song2.mp3">someday - the ridleys</button>
+                <button class="song" data-src="music/song3.mp3">huling uyayi ko,sinta - ian quiriz</button>
+            </div>
+            <div class="player-box">
+                <audio id="player" loop></audio>
+                <button class="play-btn" id="playBtn">Play</button>
+                <div class="volume-wrap">
+                    <span class="vol-label">Volume</span>
+                    <input type="range" id="volumeSlider" min="0" max="100" value="70" class="volume-slider">
+                    <span class="vol-value" id="volValue">70%</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- LETTER -->
+        <section class="letter">
+            <h2>A Letter For You</h2>
+            <div class="letter-text">
+
+                <p>babyyyyy, u have no idea how much ur words mean to me 🥹💞
+                    thank u for loving me the way u do and for always making me feel so special and appreciated. i'm
+                    genuinely so lucky to have u in my life, and i hope u know that u mean just as much to me. u
+                    make me
+                    happy in ways u don't even realize, and just having u by my side makes everything feel so much
+                    better. i know we're not perfect, and there will be times na things might get difficult, but i
+                    promise i'll always do my best to understand u, choose u, and love u through everything. i wanna
+                    be
+                    ur comfort, ur safe place, and the person u can always count on. thank u for being my favorite
+                    person and for giving me so many reasons to smile. i'm so excited to make more beautiful
+                    memories
+                    with u and to keep growing together. i'm so blessed to have u, my love, and i'll never get tired
+                    of
+                    reminding u how much i love and appreciate u. i love u so so much, my babyyyyy, more than words
+                    could ever explain. you're my everything too, always and foreverrrr 💞🫂🥹</p>
+                <p>I love you more than words can hold.</p>
+            </div>
+            <p class="sign">Always yours</p>
+        </section>
+
+
+        <!-- COUNTER -->
+        <section class="counter">
+            <h2>Since Day One</h2>
+            <div class="counter-box">
+                <div><span id="days">0</span><small>days</small></div>
+                <div><span id="hours">0</span><small>hours</small></div>
+                <div><span id="mins">0</span><small>minutes</small></div>
+                <div><span id="secs">0</span><small>seconds</small></div>
+            </div>
+            <p class="counter-note">...and counting, always.</p>
+        </section>
+
+        <footer>
+            <p><i>my beloved ara.</i></p>
+        </footer>
+
+    </div>
+
+    <div class="cursor-heart" id="cursorHeart">♡</div>
+
+    <script>
+        /* ════════ INTRO OPEN ════════ */
+        const introScreen = document.getElementById('introScreen');
+        const introBg = document.getElementById('introBg');
+        const introHeart = document.getElementById('introHeart');
+        const mainPage = document.getElementById('mainPage');
+        let opened = false;
+
+        document.body.style.overflow = 'hidden';
+
+        // Set background image
+        introBg.style.backgroundImage = "url('images/her.jpg')";
+
+        function openSite() {
+            if (opened) return;
+            opened = true;
+
+            introScreen.classList.add('opening');
+            introBg.classList.add('clear');
+
+            setTimeout(() => {
+                mainPage.classList.add('show');
+                document.body.style.overflow = 'auto';
+            }, 1200);
+
+            setTimeout(() => {
+                introScreen.style.display = 'none';
+            }, 2400);
+        }
+
+        introHeart.addEventListener('click', openSite);
+        introScreen.addEventListener('click', openSite);
+
+        /* ════════ SMOOTH LERP CURSOR ════════ */
+        const cursor = document.getElementById('cursorHeart');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+
+        document.addEventListener('mousemove', e => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.18;
+            cursorY += (mouseY - cursorY) * 0.18;
+            cursor.style.transform =
+                `translate3d(${cursorX - 13}px, ${cursorY - 13}px, 0)`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        /* ════════ TYPING LETTER ════════ */
+        const letterParas = document.querySelectorAll('.letter-text p');
+        letterParas.forEach(p => {
+            const text = p.textContent;
+            p.textContent = '';
+            p.dataset.text = text;
+        });
+
+        let letterStarted = false;
+        function startTyping() {
+            if (letterStarted) return;
+            letterStarted = true;
+            let delay = 0;
+            letterParas.forEach(p => {
+                const text = p.dataset.text;
+                const speed = 22;
+                for (let i = 0; i < text.length; i++) {
+                    setTimeout(() => {
+                        p.textContent += text[i];
+                    }, delay);
+                    delay += speed;
+                }
+                delay += 300;
+            });
+        }
+
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    if (entry.target.classList.contains('letter')) {
+                        startTyping();
+                    }
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.main-page section, .fade-up').forEach(el => observer.observe(el));
+
+
+        const player = document.getElementById('player');
+        const playBtn = document.getElementById('playBtn');
+        const volSlider = document.getElementById('volumeSlider');
+        const volValue = document.getElementById('volValue');
+
+        player.volume = volSlider.value / 100;
+
+        playBtn.addEventListener('click', () => {
+            if (!player.src) {
+                const firstSong = document.querySelector('.song');
+                if (firstSong) {
+                    player.src = firstSong.dataset.src;
+                    firstSong.classList.add('active');
+                }
+            }
+            if (player.paused) {
+                player.play();
+                playBtn.textContent = 'Pause';
+            } else {
+                player.pause();
+                playBtn.textContent = 'Play';
+            }
+        });
+
+        player.addEventListener('play', () => playBtn.textContent = 'Pause');
+        player.addEventListener('pause', () => playBtn.textContent = 'Play');
+
+        volSlider.addEventListener('input', () => {
+            player.volume = volSlider.value / 100;
+            volValue.textContent = volSlider.value + '%';
+        });
+
+        document.querySelectorAll('.song').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.song').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                player.src = btn.dataset.src;
+                player.play();
+            });
+        });
+
+
+        const startDate = new Date("2026-09-09T16:58:00");
+
+        function updateCounter() {
+            const now = new Date();
+            const diff = Math.floor((now - startDate) / 1000);
+            document.getElementById('days').textContent = Math.floor(diff / 86400);
+            document.getElementById('hours').textContent = Math.floor((diff % 86400) / 3600);
+            document.getElementById('mins').textContent = Math.floor((diff % 3600) / 60);
+            document.getElementById('secs').textContent = diff % 60;
+        }
+        updateCounter();
+        setInterval(updateCounter, 1000);
+    </script>
+
+</body>
+
+</html>
