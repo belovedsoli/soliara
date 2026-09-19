@@ -192,7 +192,7 @@
             });
         }
 
-
+        /* ════════ SCROLL REVEAL ════════ */
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -206,15 +206,31 @@
 
         document.querySelectorAll('.main-page section, .fade-up').forEach(el => observer.observe(el));
 
-
+        /* ════════ MUSIC PLAYER + VOLUME (mobile-safe) ════════ */
         const player = document.getElementById('player');
         const playBtn = document.getElementById('playBtn');
         const volSlider = document.getElementById('volumeSlider');
         const volValue = document.getElementById('volValue');
 
-        player.volume = volSlider.value / 100;
+        let audioCtx = null;
+        let gainNode = null;
+        let sourceNode = null;
 
-        playBtn.addEventListener('click', () => {
+        function setupWebAudio() {
+            if (audioCtx) return;
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                sourceNode = audioCtx.createMediaElementSource(player);
+                gainNode = audioCtx.createGain();
+                gainNode.gain.value = volSlider.value / 100;
+                sourceNode.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+            } catch (e) {
+                console.warn("Web Audio not available, using fallback:", e);
+            }
+        }
+
+        playBtn.addEventListener('click', async () => {
             if (!player.src) {
                 const firstSong = document.querySelector('.song');
                 if (firstSong) {
@@ -222,8 +238,15 @@
                     firstSong.classList.add('active');
                 }
             }
+
+            setupWebAudio();
+
+            if (audioCtx && audioCtx.state === 'suspended') {
+                await audioCtx.resume();
+            }
+
             if (player.paused) {
-                player.play();
+                await player.play();
                 playBtn.textContent = 'Pause';
             } else {
                 player.pause();
@@ -235,20 +258,31 @@
         player.addEventListener('pause', () => playBtn.textContent = 'Play');
 
         volSlider.addEventListener('input', () => {
-            player.volume = volSlider.value / 100;
+            const vol = volSlider.value / 100;
             volValue.textContent = volSlider.value + '%';
+
+            if (gainNode) {
+                gainNode.gain.value = vol;
+            } else {
+                player.volume = vol;
+            }
         });
 
         document.querySelectorAll('.song').forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', async () => {
                 document.querySelectorAll('.song').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
+
                 player.src = btn.dataset.src;
+                setupWebAudio();
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    await audioCtx.resume();
+                }
                 player.play();
             });
         });
 
-
+        /* ════════ LOVE COUNTER ════════ */
         const startDate = new Date("2026-09-09T16:58:00");
 
         function updateCounter() {
